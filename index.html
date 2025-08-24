@@ -30,7 +30,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 10vh;
-            background-image: url('http://googleusercontent.com/file_content/1');
+            background-image: url('https://googleusercontent.com/file_content/1');
             background-repeat: repeat;
             background-size: 150px;
             background-blend-mode: luminosity;
@@ -102,6 +102,7 @@
             justify-content: center;
             gap: 2em;
             margin-top: 1em;
+            flex-wrap: wrap; /* Para se ajustar em telas menores */
         }
 
         .nav-links a {
@@ -119,13 +120,13 @@
             border-color: var(--color-highlight);
         }
 
-        .ai-section {
+        .ai-section, .about-me-section, .project-section, .contact, .ai-explanation-section {
             margin-top: 4em;
             padding-top: 2em;
             border-top: 1px solid var(--color-text);
         }
 
-        .ai-section h2, .about-me-section h2, .project-section h2, .contact h2 {
+        .ai-section h2, .about-me-section h2, .project-section h2, .contact h2, .ai-explanation-section h2 {
             font-family: var(--font-mono);
             font-size: 2em;
             color: var(--color-highlight);
@@ -134,10 +135,23 @@
             margin-bottom: 1.5em;
         }
 
-        .ai-section p {
+        .ai-section p, .ai-explanation-section p {
             font-size: 1em;
             line-height: 1.5;
             margin-bottom: 1em;
+        }
+        
+        .ai-explanation-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .ai-explanation-section li {
+            background-color: #2a3e3a;
+            padding: 1em;
+            margin-bottom: 1em;
+            border: 1px solid var(--color-highlight);
+            border-left: 4px solid var(--color-highlight);
         }
 
         .ai-section textarea {
@@ -200,12 +214,6 @@
             40% { transform: scale(1.0); }
         }
 
-        .project-section, .about-me-section {
-            margin-top: 4em;
-            padding-top: 2em;
-            border-top: 1px solid var(--color-text);
-        }
-
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -259,9 +267,6 @@
 
         .contact {
             text-align: center;
-            margin-top: 4em;
-            padding-top: 2em;
-            border-top: 1px solid var(--color-text);
         }
 
         .contact h2 {
@@ -331,41 +336,43 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-
-        .music-control-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-            z-index: 1000;
+        
+        /* YouTube Player Section */
+        .youtube-player-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin: 2em auto;
+            border: 2px solid var(--color-highlight);
+        }
+        
+        #youtube-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
-        #music-display {
-            background-color: rgba(28, 46, 42, 0.7);
-            color: var(--color-text);
-            font-family: var(--font-mono);
-            font-size: 0.8em;
-            padding: 5px 10px;
-            border: 1px solid var(--color-text);
-            border-radius: 5px;
-            max-width: 200px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: none;
+        .music-control-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         
         .music-input-container {
             display: flex;
             align-items: center;
             gap: 5px;
+            width: 100%;
+            max-width: 400px;
         }
 
         .music-input {
-            width: 150px;
+            width: 100%;
             background-color: var(--color-bg);
             border: 1px solid var(--color-text);
             color: var(--color-text);
@@ -385,6 +392,7 @@
             font-size: 1.5em;
             cursor: pointer;
             transition: transform 0.2s, background-color 0.3s;
+            flex-shrink: 0;
         }
 
         .music-toggle:hover {
@@ -435,14 +443,6 @@
             left: 50%;
             transform: translate(-50%, -50%);
             transition: transform 0.1s ease;
-        }
-        
-        .pupil.dizzy {
-            animation: spin 0.5s linear infinite;
-        }
-        
-        .pupil.is-grabbed {
-            animation: pulse 1s infinite;
         }
         
         @keyframes spin {
@@ -541,9 +541,16 @@
             }
             
             .music-control-container {
-                top: 10px;
-                right: 10px;
+                top: auto;
+                bottom: 20px;
+                right: 20px;
                 align-items: center;
+                flex-direction: row;
+                position: fixed;
+            }
+            
+            .music-input-container {
+                flex-grow: 1;
             }
 
             .music-toggle {
@@ -553,12 +560,17 @@
             }
             
             .music-input {
-                width: 100px;
+                width: 100%;
             }
             
             .message-box {
                 width: 90%;
                 box-sizing: border-box;
+            }
+            
+            /* Oculta o olho em telas menores */
+            .eye-container {
+                display: none;
             }
         }
     </style>
@@ -598,15 +610,13 @@
             <path d="M50 5c-11.4 0-21.7 4.6-29.2 12.1C13.3 24.8 8.7 35.1 8.7 46.5c0 10 3.7 19.3 10 26.5L3.3 89c-1.1 2.2-.2 4.9 2 6.1s4.9.2 6.1-2l14.8-29.3c5.3 1.8 11.2 2.8 17.8 2.8 11.4 0 21.7-4.6 29.2-12.1S91.3 58.4 91.3 47c0-10-3.7-19.3-10-26.5L96.7 11c1.1-2.2.2-4.9-2-6.1S90.7 2.7 89.6 5l-14.8 29.3c-5.3-1.8-11.2-2.8-17.8-2.8zM50 40.8c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3-6.4 14.3-14.3 14.3zm20.8 28.5c-3.2-3.1-7.1-5.6-11.5-7.3-4.4-1.7-9.3-2.6-14.3-2.6-5.4 0-10.4 1-15.1 2.9-4.7 1.9-9 4.7-12.7 8.3L23 93.6c-1 2 0 4.4 2.1 5.5s4.4-.1 5.5-2.1L49 71.7c3.9-1.9 8.1-2.8 12.5-2.8 4.6 0 9.1.9 13.3 2.7l14.2 27.5c1.1 2.1 3.5 3 5.6 1.9s3-3.5 1.9-5.6L84.8 74c-4-4.2-9-7.3-14-9.7z"/>
         </svg>
     </div>
-
+    
     <div class="music-control-container">
-        <div id="music-display">Música: Nenhum</div>
         <div class="music-input-container">
-            <input type="text" id="music-url-input" class="music-input" placeholder="Cole o URL de um arquivo .mp3/.wav">
-            <button id="music-toggle" class="music-toggle">🎶</button>
+            <input type="text" id="music-url-input" class="music-input" placeholder="Cole o URL de um vídeo do YouTube">
+            <button id="music-toggle" class="music-toggle">▶️</button>
         </div>
     </div>
-    <audio id="background-music" loop></audio>
     <div id="message-box" class="message-box"></div>
 
     <div id="eye-container" class="eye-container">
@@ -633,8 +643,18 @@
         <section class="about-me-section" id="about-me-section">
             <h2>Sobre Mim</h2>
             <p>
-                Em desenvolvimento
+                Em desenvolvimento. Este site é totalmente responsivo e se adapta automaticamente a diferentes tamanhos de tela.
             </p>
+        </section>
+        
+        <section class="music-section" id="music-section">
+            <h2>REPRODUTOR DE VÍDEOS</h2>
+            <p>
+                Basta colar o URL de um vídeo do YouTube no campo abaixo e clicar no botão para assistir.
+            </p>
+            <div class="youtube-player-container">
+                <div id="youtube-player"></div>
+            </div>
         </section>
 
         <section class="project-section" id="projects-section">
@@ -719,11 +739,12 @@
             <span id="version-info"></span>
         </footer>
     </div>
+    
+    <!-- Carrega a API do YouTube Player -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         // Função para atualizar o número da versão
-        // A lógica é: se o último número (patch) ou o segundo número (minor)
-        // chegar a 10, ele reseta para 0 e o número à esquerda é incrementado.
         function getNextVersion(currentVersion) {
             let parts = currentVersion.split('.').map(Number);
             let major = parts[0];
@@ -744,10 +765,7 @@
             return `${major}.${minor}.${patch}`;
         }
     
-        // A versão inicial do portfólio antes da atualização
-        const initialVersion = '0.0.9';
-
-        // Calcula a nova versão usando a função
+        const initialVersion = '0.0.10'; // Versão atualizada
         const appVersion = getNextVersion(initialVersion);
 
         const bootUpScreen = document.getElementById('boot-up-screen');
@@ -795,28 +813,24 @@
                     mainContent.classList.remove('hidden');
                     setTimeout(() => {
                         mainContent.classList.add('visible');
-                        setRandomEyePosition(); // Define a posição inicial aleatória
-                        eyeContainer.classList.add('visible'); // Torna o olho visível
+                        setRandomEyePosition();
+                        eyeContainer.classList.add('visible');
                         versionInfo.textContent = `Version ${appVersion}`;
+                        startEyeAnimation(); // Inicia a animação do olho
                     }, 10);
                 }, 1000);
             }
         }
         
-        // Função para definir a posição aleatória do container do olho
         function setRandomEyePosition() {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
-
-            // Garante que os olhos não fiquem muito perto das bordas
             const minX = viewportWidth * 0.1;
             const maxX = viewportWidth * 0.9;
             const minY = viewportHeight * 0.1;
             const maxY = viewportHeight * 0.9;
-
             const randomX = Math.random() * (maxX - minX) + minX;
             const randomY = Math.random() * (maxY - minY) + minY;
-            
             eyeContainer.style.left = `${randomX}px`;
             eyeContainer.style.top = `${randomY}px`;
         }
@@ -829,12 +843,12 @@
         const eyeSockets = document.querySelectorAll('.eye-socket');
 
         let isGrabbed = false;
-        let dizzyTimeout = null;
         let startX, startY;
         let initialLeft, initialTop;
-
+        
+        // Faz o olho seguir o mouse apenas em telas maiores que 768px
         document.addEventListener('mousemove', (e) => {
-            if (!isGrabbed) return;
+            if (window.innerWidth <= 768) return;
 
             eyeSockets.forEach(eyeSocket => {
                 const rect = eyeSocket.getBoundingClientRect();
@@ -852,16 +866,27 @@
 
                 eyeSocket.querySelector('.pupil').style.transform = `translate(${pupilX}px, ${pupilY}px)`;
             });
-            
-            // Atualiza a posição do container do olho durante o arrasto
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            eyeContainer.style.left = `${initialLeft + dx}px`;
-            eyeContainer.style.top = `${initialTop + dy}px`;
         });
-        
-        // Funcionalidade de arrastar para o container do olho
+
+        // Adiciona a nova funcionalidade de animação do olho
+        function startEyeAnimation() {
+            if (window.innerWidth <= 768) return;
+            setInterval(() => {
+                eyeSockets.forEach(eyeSocket => {
+                    const pupil = eyeSocket.querySelector('.pupil');
+                    const moveX = (Math.random() - 0.5) * 2; // Movimento sutil entre -1 e 1
+                    const moveY = (Math.random() - 0.5) * 2;
+                    const currentTransform = pupil.style.transform || 'translate(-50%, -50%)';
+                    const newTransform = `translate(calc(${moveX}px - 50%), calc(${moveY}px - 50%))`;
+                    pupil.style.transform = newTransform;
+                });
+            }, 2000); // Muda a posição a cada 2 segundos
+        }
+
+
+        // Funcionalidade de arrastar
         eyeContainer.addEventListener('mousedown', (e) => {
+            if (window.innerWidth <= 768) return;
             e.preventDefault();
             isGrabbed = true;
             startX = e.clientX;
@@ -870,8 +895,6 @@
             initialTop = eyeContainer.offsetTop;
             eyeContainer.style.cursor = 'grabbing';
             eyeContainer.classList.add('is-grabbed');
-            pupils.forEach(pupil => pupil.classList.add('dizzy'));
-            clearTimeout(dizzyTimeout);
         });
 
         document.addEventListener('mouseup', () => {
@@ -879,11 +902,6 @@
                 isGrabbed = false;
                 eyeContainer.style.cursor = 'grab';
                 eyeContainer.classList.remove('is-grabbed');
-
-                // Após 5 segundos, remove a animação de tontura
-                dizzyTimeout = setTimeout(() => {
-                    pupils.forEach(pupil => pupil.classList.remove('dizzy'));
-                }, 5000);
             }
         });
 
@@ -924,7 +942,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             chatHistory.push({ role: "user", parts: [{ text: fullPrompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = ""; // A chave de API é fornecida automaticamente pelo ambiente
+            const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent`;
 
             const maxRetries = 3;
@@ -985,7 +1003,6 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
         const emailToCopy = 'Capscontato@outlook.com';
         
         emailButton.addEventListener('click', () => {
-            // Usa a API Clipboard se estiver disponível
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(emailToCopy)
                     .then(() => {
@@ -997,11 +1014,9 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                     })
                     .catch(err => {
                         console.error('Falha ao copiar:', err);
-                        // Fallback para o método antigo
                         fallbackCopyToClipboard(emailToCopy);
                     });
             } else {
-                // Fallback para o método antigo
                 fallbackCopyToClipboard(emailToCopy);
             }
         });
@@ -1030,54 +1045,61 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             document.body.removeChild(tempInput);
         }
 
-        const musicToggle = document.getElementById('music-toggle');
-        const backgroundMusic = document.getElementById('background-music');
+        // --- Funcionalidade do YouTube Player ---
+        let player;
         const musicUrlInput = document.getElementById('music-url-input');
-        const musicDisplay = document.getElementById('music-display');
+        const musicToggle = document.getElementById('music-toggle');
+        const youtubePlayerDiv = 'youtube-player';
         
-        let isPlaying = false;
-
-        function getFileNameFromUrl(url) {
-            try {
-                const urlObj = new URL(url);
-                const path = urlObj.pathname.split('/').pop();
-                if (path) {
-                    return decodeURIComponent(path.replace(/\.(mp3|wav|ogg|m4a)$/i, '').replace(/[_-]/g, ' '));
+        // Essa função é chamada automaticamente quando a API do YouTube é carregada
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player(youtubePlayerDiv, {
+                height: '390',
+                width: '640',
+                videoId: '', // ID inicial vazio
+                events: {
+                    'onReady': onPlayerReady
                 }
-            } catch (e) {
-                console.error("URL inválida:", e);
-            }
-            return 'Faixa Desconhecida';
+            });
         }
-
-        musicToggle.addEventListener('click', async () => {
-            if (isPlaying) {
-                backgroundMusic.pause();
-                musicToggle.textContent = '🎶';
-                isPlaying = false;
-            } else {
+        
+        function onPlayerReady(event) {
+            // Player está pronto, podemos adicionar um listener para o botão de play
+            musicToggle.addEventListener('click', () => {
                 const url = musicUrlInput.value.trim();
                 if (url) {
-                    backgroundMusic.src = url;
-                    const trackName = getFileNameFromUrl(url);
-                    musicDisplay.textContent = `Música: ${trackName}`;
-                    musicDisplay.style.display = 'block';
-                    try {
-                        await backgroundMusic.play();
-                        musicToggle.textContent = '⏸️';
-                        isPlaying = true;
-                    } catch (e) {
-                        showMessage('// Erro ao reproduzir. Verifique se o link é de um arquivo de áudio válido.');
-                        console.error("Erro de reprodução:", e);
-                        backgroundMusic.pause();
-                        musicToggle.textContent = '🎶';
-                        isPlaying = false;
+                    const videoId = extractVideoId(url);
+                    if (videoId) {
+                        // Se o player já estiver carregado, apenas o controlamos.
+                        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                            player.pauseVideo();
+                            musicToggle.textContent = '▶️';
+                        } else {
+                            // Se o player não tiver vídeo, carrega um novo
+                            if (player.getVideoUrl() === `https://www.youtube.com/watch?v=${videoId}`) {
+                                player.playVideo();
+                                musicToggle.textContent = '⏸️';
+                            } else {
+                                player.loadVideoById(videoId);
+                                musicToggle.textContent = '⏸️';
+                            }
+                        }
+                    } else {
+                        showMessage('// URL do YouTube inválido. Por favor, cole um link de vídeo válido.');
                     }
                 } else {
-                    showMessage('// Por favor, adicione o URL de uma música no campo de entrada para que o botão funcione!');
+                    showMessage('// Por favor, adicione o URL de um vídeo do YouTube no campo.');
                 }
-            }
-        });
+            });
+        }
+        
+        // Extrai o ID do vídeo de várias URLs do YouTube
+        function extractVideoId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
     </script>
 </body>
 </html>
