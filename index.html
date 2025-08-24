@@ -26,11 +26,10 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            /* Adicionado para colocar a imagem de fundo */
             background-image: url('http://googleusercontent.com/file_content/1');
             background-repeat: repeat;
-            background-size: 150px; /* Ajuste este valor para mudar o tamanho dos ícones */
-            background-blend-mode: luminosity; /* Mistura a imagem com a cor de fundo para "remover" o preto */
+            background-size: 150px;
+            background-blend-mode: luminosity;
         }
 
         .boot-up {
@@ -651,7 +650,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             chatHistory.push({ role: "user", parts: [{ text: fullPrompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = "";
+            const apiKey = ""; // API key is provided by the environment
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent`;
 
             const maxRetries = 3;
@@ -714,7 +713,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                 const urlObj = new URL(url);
                 const path = urlObj.pathname.split('/').pop();
                 if (path) {
-                    return path.replace(/\.(mp3|wav|ogg|m4a)$/i, '').replace(/[_-]/g, ' ');
+                    return decodeURIComponent(path.replace(/\.(mp3|wav|ogg|m4a)$/i, '').replace(/[_-]/g, ' '));
                 }
             } catch (e) {
                 console.error("URL inválida:", e);
@@ -722,7 +721,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             return 'Faixa Desconhecida';
         }
 
-        musicToggle.addEventListener('click', () => {
+        musicToggle.addEventListener('click', async () => {
             if (isPlaying) {
                 backgroundMusic.pause();
                 musicToggle.textContent = '🎶';
@@ -734,9 +733,17 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                     const trackName = getFileNameFromUrl(url);
                     musicDisplay.textContent = `Música: ${trackName}`;
                     musicDisplay.style.display = 'block';
-                    backgroundMusic.play();
-                    musicToggle.textContent = '⏸️';
-                    isPlaying = true;
+                    try {
+                        await backgroundMusic.play();
+                        musicToggle.textContent = '⏸️';
+                        isPlaying = true;
+                    } catch (e) {
+                        showMessage('// Erro ao reproduzir. Verifique se o link é de um arquivo de áudio válido.');
+                        console.error("Erro de reprodução:", e);
+                        backgroundMusic.pause();
+                        musicToggle.textContent = '🎶';
+                        isPlaying = false;
+                    }
                 } else {
                     showMessage('// Por favor, adicione o URL de uma música no campo de entrada para que o botão funcione!');
                 }
