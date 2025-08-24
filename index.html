@@ -383,7 +383,7 @@
     </div>
 
     <!-- Conteúdo principal do portfólio (inicialmente oculto) -->
-    <div class="main-content" id="main-content">
+    <div class="main-content hidden" id="main-content">
         <!-- Cabeçalho com o nome e a especialidade -->
         <header class="header">
             <h1>Andrey André</h1>
@@ -629,7 +629,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             } else {
                 if (backgroundMusic.src) { // Só tenta tocar se houver um arquivo
                     backgroundMusic.play();
-                    musicToggle.textContent = ⏸️';
+                    musicToggle.textContent = '⏸️';
                 } else {
                     alert("Por favor, adicione uma música ao código para que o botão funcione!");
                 }
