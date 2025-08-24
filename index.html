@@ -490,10 +490,17 @@
                 // Final da animação: mostra o conteúdo principal e as novas funcionalidades
                 setTimeout(() => {
                     bootUpScreen.style.display = 'none';
+                    
+                    // CORREÇÃO: Remove a classe 'hidden' para permitir que o 'main-content'
+                    // seja exibido no layout antes de aplicar a transição de opacidade.
                     mainContent.classList.remove('hidden');
-                    mainContent.classList.add('visible');
-                    // Exibe os olhos após a inicialização
-                    document.getElementById('eye-container').classList.add('visible');
+                    
+                    // Adiciona a classe 'visible' após um pequeno atraso. Isso garante
+                    // que a transição CSS de 'opacity' de 0 para 1 seja ativada corretamente.
+                    setTimeout(() => {
+                        mainContent.classList.add('visible');
+                        document.getElementById('eye-container').classList.add('visible');
+                    }, 10); // 10ms de atraso é suficiente para a transição
                 }, 1000);
             }
         }
@@ -631,7 +638,8 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                     backgroundMusic.play();
                     musicToggle.textContent = '⏸️';
                 } else {
-                    alert("Por favor, adicione uma música ao código para que o botão funcione!");
+                    // Substituído o 'alert()' por uma mensagem na tela para evitar erros no ambiente.
+                    projectOutput.textContent = '// Por favor, adicione uma música ao código para que o botão funcione!';
                 }
             }
             isPlaying = !isPlaying;
