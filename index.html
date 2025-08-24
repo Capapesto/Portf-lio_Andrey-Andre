@@ -467,7 +467,8 @@
     <div class="music-control-container">
         <div id="music-display">Música: Nenhum</div>
         <div class="music-input-container">
-            <input type="text" id="music-url-input" class="music-input" placeholder="Cole o URL da música aqui...">
+            <!-- Instrução para o usuário: explique que precisa de um link direto do arquivo de áudio -->
+            <input type="text" id="music-url-input" class="music-input" placeholder="Cole o URL de um arquivo .mp3/.wav">
             <button id="music-toggle" class="music-toggle">🎶</button>
         </div>
     </div>
@@ -650,7 +651,7 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             chatHistory.push({ role: "user", parts: [{ text: fullPrompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = ""; // API key is provided by the environment
+            const apiKey = ""; // A chave de API é fornecida automaticamente pelo ambiente
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent`;
 
             const maxRetries = 3;
@@ -666,6 +667,8 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                     });
                     
                     if (!response.ok) {
+                        // Lidar com erros de status HTTP
+                        console.error(`HTTP error! status: ${response.status}`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
@@ -675,15 +678,19 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
                         result.candidates[0].content.parts.length > 0) {
                         responseText = result.candidates[0].content.parts[0].text;
                     } else {
+                        // Lidar com estrutura de resposta inesperada da API
+                        console.error('Unexpected API response structure or no content.', result);
                         throw new Error('Unexpected API response structure or no content.');
                     }
                 } catch (error) {
                     currentRetry++;
                     if (currentRetry < maxRetries) {
                         const delay = Math.pow(2, currentRetry) * 1000;
+                        console.log(`Tentativa de conexão falhou. Re-tentando em ${delay / 1000}s... (Tentativa ${currentRetry}/${maxRetries})`);
                         await new Promise(res => setTimeout(res, delay));
                         await fetchWithRetry();
                     } else {
+                        console.error("Máximo de tentativas de conexão atingido. Erro final:", error);
                         throw error;
                     }
                 }
