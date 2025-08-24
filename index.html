@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio | Andrey André</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap">
+    <style>
+        /* Variáveis de cor e fonte para fácil personalização */
+        :root {
+            --color-bg: #1C2E2A;
+            --color-text: #C3D6C9;
+            --color-highlight: #66FF66;
+            --color-accent: #FFD700;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Animação e estilo da sequência de inicialização */
+        .boot-up {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-mono);
+            font-size: 1.5em;
+            white-space: pre;
+        }
+
+        .boot-up-text {
+            border-right: 2px solid var(--color-highlight);
+            animation: blink-caret 0.75s step-end infinite;
+            overflow: hidden;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--color-highlight); }
+        }
+        
+        /* Estilo da seção principal do portfólio, inicialmente oculta */
+        .main-content {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2em;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+
+        .main-content.hidden {
+            display: none;
+        }
+
+        /* Seção do cabeçalho */
+        .header {
+            padding: 3em 0 1em;
+            border-bottom: 1px solid var(--color-text);
+            margin-bottom: 2em;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: var(--font-mono);
+            font-size: 3em;
+            color: var(--color-highlight);
+            margin: 0;
+            letter-spacing: 0.1em;
+        }
+
+        .header p {
+            font-family: var(--font-sans);
+            font-size: 1.2em;
+            margin-top: 0.5em;
+        }
+
+        /* Estilo para as novas seções */
+        .ai-section {
+            margin-top: 4em;
+            padding-top: 2em;
+            border-top: 1px solid var(--color-text);
+        }
+
+        .ai-section h2 {
+            font-family: var(--font-mono);
+            font-size: 2em;
+            color: var(--color-highlight);
+            border-bottom: 1px solid var(--color-text);
+            padding-bottom: 0.5em;
+            margin-bottom: 1.5em;
+        }
+
+        .ai-section p {
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 1em;
+        }
+
+        .ai-section textarea {
+            width: 100%;
+            min-height: 100px;
+            background-color: var(--color-bg);
+            border: 2px solid var(--color-text);
+            color: var(--color-text);
+            font-family: var(--font-mono);
+            padding: 1em;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .ai-section button {
+            background-color: var(--color-highlight);
+            color: var(--color-bg);
+            border: none;
+            padding: 1em 2em;
+            font-family: var(--font-mono);
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1em;
+        }
+
+        .ai-section button:hover {
+            background-color: var(--color-accent);
+        }
+
+        .ai-output {
+            margin-top: 2em;
+            background-color: #1a1a1a;
+            border: 2px solid var(--color-highlight);
+            padding: 2em;
+            font-family: var(--font-mono);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 150px;
+        }
+
+        /* Animação do carregamento */
+        .loading-dots {
+            font-size: 2em;
+            text-align: center;
+            display: none;
+        }
+
+        .loading-dots span {
+            animation: bounce 1.4s infinite ease-in-out both;
+            display: inline-block;
+            color: var(--color-highlight);
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* Seção de projetos (Registro de Dados) */
+        .project-section {
+            margin-top: 4em;
+            padding-top: 2em;
+            border-top: 1px solid var(--color-text);
+        }
+
+        .project-section h2 {
+            font-family: var(--font-mono);
+            font-size: 2em;
+            color: var(--color-highlight);
+            border-bottom: 1px solid var(--color-text);
+            padding-bottom: 0.5em;
+            margin-bottom: 1.5em;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2em;
+        }
+
+        .project-module {
+            background-color: var(--color-bg);
+            border: 2px solid var(--color-text);
+            padding: 1.5em;
+            transition: transform 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+
+        .project-module:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-highlight);
+        }
+
+        .project-module img {
+            width: 100%;
+            height: auto;
+            border-bottom: 2px solid var(--color-text);
+            margin-bottom: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .project-module:hover img {
+            border-color: var(--color-highlight);
+        }
+
+        .project-module h3 {
+            font-family: var(--font-mono);
+            font-size: 1.2em;
+            color: var(--color-text);
+            margin: 0;
+            margin-bottom: 0.5em;
+            transition: color 0.3s;
+        }
+        
+        .project-module:hover h3 {
+            color: var(--color-highlight);
+        }
+
+        .project-module p {
+            font-family: var(--font-sans);
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Seção de contato (Protocolo de Contato) */
+        .contact {
+            text-align: center;
+            margin-top: 4em;
+            padding-top: 2em;
+            border-top: 1px solid var(--color-text);
+        }
+
+        .contact h2 {
+            font-family: var(--font-mono);
+            font-size: 1.8em;
+            color: var(--color-highlight);
+            margin-bottom: 1em;
+        }
+
+        .social-links a {
+            font-family: var(--font-mono);
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 0.5em 1em;
+            border: 2px solid var(--color-text);
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            margin: 0 0.5em;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            background-color: var(--color-highlight);
+            color: var(--color-bg);
+            border-color: var(--color-highlight);
+        }
+        
+        /* Estilos para o botão de música */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--color-text);
+            color: var(--color-bg);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            background-color: var(--color-highlight);
+        }
+
+        /* Estilos para os olhos que seguem o mouse */
+        .eye-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        .eye-container.visible {
+            opacity: 1;
+        }
+
+        .eye-socket {
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-text);
+            position: relative;
+            margin: 0 5px;
+            overflow: hidden;
+        }
+
+        .pupil {
+            background-color: #000;
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .music-toggle {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Seção inicial de "boot-up" -->
+    <div class="boot-up" id="boot-up-screen">
+        <pre class="boot-up-text"></pre>
+    </div>
+
+    <!-- Botão para ligar/desligar a música -->
+    <button id="music-toggle" class="music-toggle">🎶</button>
+    <audio id="background-music" loop></audio>
+
+    <!-- Olhos que seguem o cursor -->
+    <div id="eye-container" class="eye-container">
+        <div class="eye-socket">
+            <div class="pupil"></div>
+        </div>
+        <div class="eye-socket">
+            <div class="pupil"></div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal do portfólio (inicialmente oculto) -->
+    <div class="main-content" id="main-content">
+        <!-- Cabeçalho com o nome e a especialidade -->
+        <header class="header">
+            <h1>Andrey André</h1>
+            <p>Eletroeletrônica & Automação</p>
+        </header>
+
+        <!-- Seção de projetos, apresentados como "módulos de dados" -->
+        <section class="project-section">
+            <h2>Registro de Dados</h2>
+            <div class="project-grid">
+                <!-- Projeto 1: Torreta Automática de Defesa Caseira (versão não letal) -->
+                <div class="project-module">
+                    <img src="https://placehold.co/600x400/1e1e1e/B0BEC5?text=Torre+de+Defesa" alt="Imagem da Torreta Automática de Defesa">
+                    <h3>Torre de Defesa Automática (Não-letal)</h3>
+                    <p>Uma torre de defesa caseira autônoma que utiliza servo-motores e um sensor infravermelho/termal para rastrear o calor humano. Programada para disparar jatos de água ou bolinhas de gel, ela é ativada ou desativada por um botão de toque invisível usando um sensor capacitivo TTP223, garantindo um controle discreto. A lógica de rastreamento é gerenciada por um algoritmo PID para precisão.
+                    </p>
+                </div>
+                
+                <!-- Projeto 2: Sistema de Controle de Iluminação Inteligente -->
+                <div class="project-module">
+                    <img src="https://placehold.co/600x400/1e1e1e/B0BEC5?text=Iluminação+Inteligente" alt="Imagem do Sistema de Iluminação Inteligente">
+                    <h3>Sistema de Iluminação Inteligente</h3>
+                    <p>Desenvolvido para transformar qualquer ambiente, este projeto permite o controle total da iluminação. Utilizando um microcontrolador ESP32 para conectividade Wi-Fi, o sistema ajusta a intensidade ou a cor de fitas LED RGB através de comandos de um aplicativo customizado ou por integração com assistentes de voz como Google Assistant e Alexa. Uma solução prática e moderna para automação residencial.
+                    </p>
+                </div>
+
+                <!-- Projeto 3: Varinha Mágica Ativada por Voz -->
+                <div class="project-module">
+                    <img src="https://placehold.co/600x400/1e1e1e/B0BEC5?text=Varinha+Mágica" alt="Imagem de uma varinha mágica com luzes.">
+                    <h3>Varinha Mágica Ativada por Voz</h3>
+                    <p>Um projeto que traz a fantasia à vida! Esta varinha mágica responde a comandos de voz, alterando a cor de um LED interno para simular diferentes feitiços. Com um design compacto e um microcontrolador de baixo consumo, ela é perfeita para cosplays, apresentações ou como um gadget divertido. A interface de voz é treinada para reconhecer palavras-chave, permitindo uma interação totalmente mãos-livres e mágica.
+                    </p>
+                </div>
+
+                <!-- Adicione mais módulos de projeto aqui -->
+            </div>
+        </section>
+
+        <!-- Nova seção para o assistente de IA, usando a API do Gemini -->
+        <section class="ai-section">
+            <h2>TERMINAL DE PROJETOS ✨</h2>
+            <p>
+                Precisa de uma nova ideia para um projeto? Descreva um tema ou um problema e nosso assistente de IA irá gerar um conceito de projeto de eletroeletrônica para você.
+            </p>
+            <textarea id="promptInput" placeholder="Ex: Projeto de IoT para monitoramento de energia; Um robô que resolve labirintos; Como usar um sensor de luz de forma criativa..."></textarea>
+            <button id="generateBtn">Gerar Ideia de Projeto ✨</button>
+            
+            <div id="loadingIndicator" class="loading-dots">
+                <span>.</span><span>.</span><span>.</span>
+            </div>
+            
+            <div id="projectOutput" class="ai-output">
+                // O conceito de projeto será exibido aqui.
+            </div>
+        </section>
+
+        <!-- Seção de contato -->
+        <section class="contact">
+            <h2>Protocolo de Contato</h2>
+            <p>
+                Para mais informações ou colaborações, inicie um protocolo de transmissão.
+            </p>
+            <div class="social-links">
+                <a href="#" target="_blank">LinkedIn</a>
+                <a href="#" target="_blank">GitHub</a>
+                <a href="mailto:seu.email@exemplo.com">Email</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript para a animação de inicialização e novas funcionalidades -->
+    <script>
+        const bootUpScreen = document.getElementById('boot-up-screen');
+        const bootUpText = bootUpScreen.querySelector('.boot-up-text');
+        const mainContent = document.getElementById('main-content');
+        
+        // Gera um nome de host aleatório para simular um computador
+        const hostname = `ANDREY@HOST-${Math.floor(Math.random() * 1000).toString().padStart(4, '0')}`;
+
+        const bootUpLines = [
+            ' > Inicializando Módulo Principal...',
+            ' > Verificando Integridade do Sistema...',
+            ' > Carregando Dados Pessoais...',
+            ` > Acesso Concedido. Bem-vindo, ${hostname}.`,
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        // Função para simular a digitação do texto
+        function typeWriter() {
+            if (lineIndex < bootUpLines.length) {
+                if (charIndex < bootUpLines[lineIndex].length) {
+                    bootUpText.textContent += bootUpLines[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 50); // Velocidade da digitação
+                } else {
+                    bootUpText.textContent += '\n'; // Adiciona nova linha
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 1000); // Pausa entre as linhas
+                }
+            } else {
+                // Final da animação: mostra o conteúdo principal e as novas funcionalidades
+                setTimeout(() => {
+                    bootUpScreen.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                    mainContent.classList.add('visible');
+                    // Exibe os olhos após a inicialização
+                    document.getElementById('eye-container').classList.add('visible');
+                }, 1000);
+            }
+        }
+
+        window.onload = function() {
+            typeWriter();
+        };
+
+        // --- LÓGICA DOS OLHOS QUE SEGUEM O MOUSE ---
+        const pupils = document.querySelectorAll('.pupil');
+        const eyeContainers = document.querySelectorAll('.eye-socket');
+
+        document.addEventListener('mousemove', (e) => {
+            eyeContainers.forEach(eyeContainer => {
+                const rect = eyeContainer.getBoundingClientRect();
+                const eyeCenterX = rect.left + rect.width / 2;
+                const eyeCenterY = rect.top + rect.height / 2;
+
+                const deltaX = e.clientX - eyeCenterX;
+                const deltaY = e.clientY - eyeCenterY;
+
+                const angle = Math.atan2(deltaY, deltaX);
+                const distance = Math.min(rect.width / 4, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+
+                const pupilX = Math.cos(angle) * distance;
+                const pupilY = Math.sin(angle) * distance;
+
+                eyeContainer.querySelector('.pupil').style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+            });
+        });
+
+        // --- LÓGICA DO GEMINI API ---
+        
+        const generateBtn = document.getElementById('generateBtn');
+        const promptInput = document.getElementById('promptInput');
+        const projectOutput = document.getElementById('projectOutput');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        generateBtn.addEventListener('click', async () => {
+            const userPrompt = promptInput.value.trim();
+            if (!userPrompt) {
+                projectOutput.textContent = '// Por favor, digite uma ideia para gerar um projeto.';
+                return;
+            }
+
+            // Exibir indicador de carregamento
+            projectOutput.style.display = 'none';
+            loadingIndicator.style.display = 'block';
+            
+            // Construir o prompt para o modelo
+            const fullPrompt = `Você é um especialista em eletroeletrônica e automação, focado em projetos com microcontroladores como Arduino, ESP32, e outros. Sua tarefa é criar um conceito de projeto detalhado para um estudante, seguindo as melhores práticas de portfólio. A ideia deve ser baseada no seguinte tema: "${userPrompt}". O resultado deve incluir:
+1.  **Título do Projeto:** Um nome técnico e descritivo.
+2.  **Visão Geral:** Um parágrafo explicando o que o projeto faz e seu propósito.
+3.  **Componentes Necessários:** Uma lista de hardware, como microcontroladores, sensores e atuadores.
+4.  **Lógica de Funcionamento:** Explicação passo a passo de como o sistema opera.
+5.  **Exemplo de Código (Pseudocódigo):** Um trecho de código comentado para ilustrar a lógica principal.
+6.  **Diagrama Conceitual:** Uma descrição textual do diagrama de conexões.
+Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto extra.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: fullPrompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const maxRetries = 3;
+            let currentRetry = 0;
+            let responseText = '';
+
+            // Função para tentar a chamada API com backoff exponencial
+            const fetchWithRetry = async () => {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        responseText = result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Unexpected API response structure or no content.');
+                    }
+                } catch (error) {
+                    currentRetry++;
+                    if (currentRetry < maxRetries) {
+                        const delay = Math.pow(2, currentRetry) * 1000; // Atraso exponencial (2s, 4s, 8s)
+                        await new Promise(res => setTimeout(res, delay));
+                        await fetchWithRetry(); // Tenta novamente
+                    } else {
+                        throw error; // Falha após o número máximo de tentativas
+                    }
+                }
+            };
+
+            try {
+                await fetchWithRetry();
+                projectOutput.textContent = responseText;
+            } catch (error) {
+                console.error("Erro ao gerar projeto:", error);
+                projectOutput.textContent = `// Erro ao conectar com o servidor. Tente novamente mais tarde.`;
+            } finally {
+                // Ocultar indicador de carregamento e exibir a saída
+                loadingIndicator.style.display = 'none';
+                projectOutput.style.display = 'block';
+            }
+        });
+
+        // --- LÓGICA DO BOTÃO DE MÚSICA ---
+        const musicToggle = document.getElementById('music-toggle');
+        const backgroundMusic = document.getElementById('background-music');
+        let isPlaying = false;
+
+        // **INSTRUÇÕES PARA O USUÁRIO:**
+        // Para a trilha sonora, insira o URL do seu arquivo de áudio (MP3, WAV, etc.) aqui.
+        // O arquivo deve estar no seu mesmo repositório do GitHub.
+        // Exemplo: backgroundMusic.src = 'caminho/para/sua/musica.mp3';
+        // Ou em uma URL pública: backgroundMusic.src = 'https://exemplo.com/sua-musica.mp3';
+        backgroundMusic.src = '';
+
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                backgroundMusic.pause();
+                musicToggle.textContent = '🎶';
+            } else {
+                if (backgroundMusic.src) { // Só tenta tocar se houver um arquivo
+                    backgroundMusic.play();
+                    musicToggle.textContent = ⏸️';
+                } else {
+                    alert("Por favor, adicione uma música ao código para que o botão funcione!");
+                }
+            }
+            isPlaying = !isPlaying;
+        });
+
+    </script>
+</body>
+</html>
