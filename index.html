@@ -26,10 +26,6 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 10vh;
             background-image: url('https://googleusercontent.com/file_content/1');
             background-repeat: repeat;
             background-size: 150px;
@@ -47,6 +43,10 @@
             font-family: var(--font-mono);
             font-size: 1.5em;
             white-space: pre;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
         }
 
         .boot-up-text {
@@ -66,6 +66,7 @@
             padding: 2em;
             opacity: 0;
             transition: opacity 1s ease-in;
+            margin: 0 auto;
         }
 
         .main-content.visible {
@@ -76,25 +77,31 @@
             display: none;
         }
 
-        .header {
-            padding: 3em 0 1em;
-            border-bottom: 1px solid var(--color-text);
-            margin-bottom: 2em;
-            text-align: center;
+        /* Título fixo no canto superior esquerdo */
+        .fixed-header {
+            position: fixed;
+            top: 1em;
+            left: 1em;
+            z-index: 1000;
+            text-align: left;
         }
-
-        .header h1 {
+        
+        .fixed-header h1 {
             font-family: var(--font-mono);
-            font-size: 3em;
+            font-size: 1.5em;
             color: var(--color-highlight);
             margin: 0;
             letter-spacing: 0.1em;
         }
-
-        .header p {
+        
+        .fixed-header p {
             font-family: var(--font-sans);
-            font-size: 1.2em;
-            margin-top: 0.5em;
+            font-size: 0.8em;
+            margin: 0;
+        }
+
+        .header-spacer {
+            height: 4em; /* Espaço para o header fixo */
         }
         
         .nav-links {
@@ -102,7 +109,7 @@
             justify-content: center;
             gap: 2em;
             margin-top: 1em;
-            flex-wrap: wrap; /* Para se ajustar em telas menores */
+            flex-wrap: wrap;
         }
 
         .nav-links a {
@@ -337,14 +344,87 @@
             transition: opacity 0.3s;
         }
         
-        /* YouTube Player Section */
+        /* YouTube Player em Gaveta */
+        .youtube-drawer-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--color-text);
+            color: var(--color-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .youtube-drawer-toggle:hover {
+            transform: scale(1.1);
+            background-color: var(--color-highlight);
+        }
+
+        .youtube-drawer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            max-width: 500px;
+            height: 0;
+            background-color: #2a3e3a;
+            border-top: 2px solid var(--color-highlight);
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out, height 0.5s ease-in-out;
+            z-index: 999;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        
+        .youtube-drawer.open {
+            height: auto;
+            transform: translateY(0);
+        }
+
+        .youtube-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+        
+        .youtube-drawer-header h3 {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 1.2em;
+            color: var(--color-highlight);
+        }
+        
+        .youtube-drawer-close {
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .youtube-drawer-close:hover {
+            color: var(--color-accent);
+        }
+
         .youtube-player-container {
             position: relative;
             width: 100%;
             padding-bottom: 56.25%; /* 16:9 aspect ratio */
             height: 0;
             overflow: hidden;
-            margin: 2em auto;
             border: 2px solid var(--color-highlight);
         }
         
@@ -356,19 +436,11 @@
             height: 100%;
         }
 
-        .music-control-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
         .music-input-container {
             display: flex;
             align-items: center;
             gap: 5px;
             width: 100%;
-            max-width: 400px;
         }
 
         .music-input {
@@ -381,21 +453,21 @@
             font-size: 0.9em;
             box-sizing: border-box;
         }
-
-        .music-toggle {
+        
+        .music-play-btn {
             background-color: var(--color-text);
             color: var(--color-bg);
             border: none;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            font-size: 1.5em;
+            width: 35px;
+            height: 35px;
+            font-size: 1em;
             cursor: pointer;
             transition: transform 0.2s, background-color 0.3s;
             flex-shrink: 0;
         }
 
-        .music-toggle:hover {
+        .music-play-btn:hover {
             transform: scale(1.1);
             background-color: var(--color-highlight);
         }
@@ -445,27 +517,14 @@
             transition: transform 0.1s ease;
         }
         
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+        @keyframes subtle-float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(5px, -5px) rotate(1deg); }
+            50% { transform: translate(0, 10px) rotate(-1deg); }
+            75% { transform: translate(-5px, -5px) rotate(1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
+
         .cthulhu-chibi {
             position: absolute;
             top: 0;
@@ -482,24 +541,6 @@
         .cthulhu-chibi:nth-child(4) { animation-delay: 15s; }
         .cthulhu-chibi:nth-child(5) { animation-delay: 2s; top: 80%; left: 10%; }
         .cthulhu-chibi:nth-child(6) { animation-delay: 7s; top: 20%; left: 90%; }
-        
-        @keyframes subtle-float {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% {
-                transform: translate(5px, -5px) rotate(1deg);
-            }
-            50% {
-                transform: translate(0, 10px) rotate(-1deg);
-            }
-            75% {
-                transform: translate(-5px, -5px) rotate(1deg);
-            }
-            100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-        }
 
         .message-box {
             position: fixed;
@@ -528,49 +569,30 @@
         }
         
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
+            .fixed-header h1 {
+                font-size: 1.2em;
             }
-
-            .header p {
-                font-size: 1em;
+            .fixed-header p {
+                font-size: 0.7em;
             }
-
             .project-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .music-control-container {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                align-items: center;
-                flex-direction: row;
-                position: fixed;
-            }
-            
-            .music-input-container {
-                flex-grow: 1;
-            }
-
-            .music-toggle {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2em;
-            }
-            
-            .music-input {
-                width: 100%;
-            }
-            
             .message-box {
                 width: 90%;
                 box-sizing: border-box;
             }
-            
-            /* Oculta o olho em telas menores */
             .eye-container {
                 display: none;
+            }
+            .youtube-drawer {
+                max-width: 100%;
+            }
+            .youtube-drawer-toggle {
+                bottom: 10px;
+                right: 10px;
+                width: 45px;
+                height: 45px;
             }
         }
     </style>
@@ -611,12 +633,22 @@
         </svg>
     </div>
     
-    <div class="music-control-container">
+    <button id="youtube-drawer-toggle" class="youtube-drawer-toggle">▶️</button>
+    
+    <div id="youtube-drawer" class="youtube-drawer">
+        <div class="youtube-drawer-header">
+            <h3>Reprodutor de Vídeos</h3>
+            <button class="youtube-drawer-close" id="youtube-drawer-close">&times;</button>
+        </div>
         <div class="music-input-container">
             <input type="text" id="music-url-input" class="music-input" placeholder="Cole o URL de um vídeo do YouTube">
-            <button id="music-toggle" class="music-toggle">▶️</button>
+            <button id="music-play-btn" class="music-play-btn">▶️</button>
+        </div>
+        <div class="youtube-player-container">
+            <div id="youtube-player"></div>
         </div>
     </div>
+    
     <div id="message-box" class="message-box"></div>
 
     <div id="eye-container" class="eye-container">
@@ -627,34 +659,27 @@
             <div class="pupil"></div>
         </div>
     </div>
-
+    
+    <div class="fixed-header">
+        <h1 id="fixed-h1">Andrey André</h1>
+        <p>Eletroeletrônica & Automação</p>
+    </div>
+    
     <div class="main-content hidden" id="main-content">
-        <header class="header">
-            <h1>Andrey André</h1>
-            <p>Eletroeletrônica & Automação</p>
-            <nav class="nav-links">
-                <a href="#about-me-section">Sobre Mim</a>
-                <a href="#projects-section">Projetos</a>
-                <a href="#ai-section">Terminal</a>
-                <a href="#contact-section">Contato</a>
-            </nav>
-        </header>
+        <div class="header-spacer"></div>
+        
+        <nav class="nav-links">
+            <a href="#about-me-section">Sobre Mim</a>
+            <a href="#projects-section">Projetos</a>
+            <a href="#ai-section">Terminal</a>
+            <a href="#contact-section">Contato</a>
+        </nav>
         
         <section class="about-me-section" id="about-me-section">
             <h2>Sobre Mim</h2>
             <p>
                 Em desenvolvimento. Este site é totalmente responsivo e se adapta automaticamente a diferentes tamanhos de tela.
             </p>
-        </section>
-        
-        <section class="music-section" id="music-section">
-            <h2>REPRODUTOR DE VÍDEOS</h2>
-            <p>
-                Basta colar o URL de um vídeo do YouTube no campo abaixo e clicar no botão para assistir.
-            </p>
-            <div class="youtube-player-container">
-                <div id="youtube-player"></div>
-            </div>
         </section>
 
         <section class="project-section" id="projects-section">
@@ -816,7 +841,7 @@
                         setRandomEyePosition();
                         eyeContainer.classList.add('visible');
                         versionInfo.textContent = `Version ${appVersion}`;
-                        startEyeAnimation(); // Inicia a animação do olho
+                        startEyeAnimation();
                     }, 10);
                 }, 1000);
             }
@@ -846,45 +871,36 @@
         let startX, startY;
         let initialLeft, initialTop;
         
-        // Faz o olho seguir o mouse apenas em telas maiores que 768px
         document.addEventListener('mousemove', (e) => {
             if (window.innerWidth <= 768) return;
-
             eyeSockets.forEach(eyeSocket => {
                 const rect = eyeSocket.getBoundingClientRect();
                 const eyeCenterX = rect.left + rect.width / 2;
                 const eyeCenterY = rect.top + rect.height / 2;
-
                 const deltaX = e.clientX - eyeCenterX;
                 const deltaY = e.clientY - eyeCenterY;
-
                 const angle = Math.atan2(deltaY, deltaX);
                 const distance = Math.min(rect.width / 4, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
-
                 const pupilX = Math.cos(angle) * distance;
                 const pupilY = Math.sin(angle) * distance;
-
                 eyeSocket.querySelector('.pupil').style.transform = `translate(${pupilX}px, ${pupilY}px)`;
             });
         });
 
-        // Adiciona a nova funcionalidade de animação do olho
         function startEyeAnimation() {
             if (window.innerWidth <= 768) return;
             setInterval(() => {
                 eyeSockets.forEach(eyeSocket => {
                     const pupil = eyeSocket.querySelector('.pupil');
-                    const moveX = (Math.random() - 0.5) * 2; // Movimento sutil entre -1 e 1
+                    const moveX = (Math.random() - 0.5) * 2;
                     const moveY = (Math.random() - 0.5) * 2;
                     const currentTransform = pupil.style.transform || 'translate(-50%, -50%)';
                     const newTransform = `translate(calc(${moveX}px - 50%), calc(${moveY}px - 50%))`;
                     pupil.style.transform = newTransform;
                 });
-            }, 2000); // Muda a posição a cada 2 segundos
+            }, 2000);
         }
 
-
-        // Funcionalidade de arrastar
         eyeContainer.addEventListener('mousedown', (e) => {
             if (window.innerWidth <= 768) return;
             e.preventDefault();
@@ -1045,18 +1061,24 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
             document.body.removeChild(tempInput);
         }
 
-        // --- Funcionalidade do YouTube Player ---
+        // --- Funcionalidade do YouTube Player na Gaveta ---
         let player;
         const musicUrlInput = document.getElementById('music-url-input');
-        const musicToggle = document.getElementById('music-toggle');
+        const musicPlayBtn = document.getElementById('music-play-btn');
         const youtubePlayerDiv = 'youtube-player';
+        const youtubeDrawerToggle = document.getElementById('youtube-drawer-toggle');
+        const youtubeDrawer = document.getElementById('youtube-drawer');
+        const youtubeDrawerClose = document.getElementById('youtube-drawer-close');
         
         // Essa função é chamada automaticamente quando a API do YouTube é carregada
         function onYouTubeIframeAPIReady() {
             player = new YT.Player(youtubePlayerDiv, {
                 height: '390',
                 width: '640',
-                videoId: '', // ID inicial vazio
+                videoId: '',
+                playerVars: {
+                    'playsinline': 1
+                },
                 events: {
                     'onReady': onPlayerReady
                 }
@@ -1064,41 +1086,45 @@ Responda diretamente com o conceito do projeto, sem nenhuma saudação ou texto 
         }
         
         function onPlayerReady(event) {
-            // Player está pronto, podemos adicionar um listener para o botão de play
-            musicToggle.addEventListener('click', () => {
+            musicPlayBtn.addEventListener('click', () => {
                 const url = musicUrlInput.value.trim();
-                if (url) {
-                    const videoId = extractVideoId(url);
-                    if (videoId) {
-                        // Se o player já estiver carregado, apenas o controlamos.
-                        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                            player.pauseVideo();
-                            musicToggle.textContent = '▶️';
-                        } else {
-                            // Se o player não tiver vídeo, carrega um novo
-                            if (player.getVideoUrl() === `https://www.youtube.com/watch?v=${videoId}`) {
-                                player.playVideo();
-                                musicToggle.textContent = '⏸️';
-                            } else {
-                                player.loadVideoById(videoId);
-                                musicToggle.textContent = '⏸️';
-                            }
-                        }
+                const videoId = extractVideoId(url);
+                
+                if (videoId) {
+                    if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                        player.pauseVideo();
+                        musicPlayBtn.textContent = '▶️';
                     } else {
-                        showMessage('// URL do YouTube inválido. Por favor, cole um link de vídeo válido.');
+                        // Se o vídeo atual for diferente, carrega um novo.
+                        if (player.getVideoUrl() && !player.getVideoUrl().includes(videoId)) {
+                             player.loadVideoById(videoId);
+                        }
+                        player.playVideo();
+                        musicPlayBtn.textContent = '⏸️';
                     }
                 } else {
-                    showMessage('// Por favor, adicione o URL de um vídeo do YouTube no campo.');
+                    showMessage('// URL do YouTube inválido. Por favor, cole um link de vídeo válido.');
                 }
             });
         }
         
-        // Extrai o ID do vídeo de várias URLs do YouTube
         function extractVideoId(url) {
             const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
             const match = url.match(regex);
             return match ? match[1] : null;
         }
+
+        youtubeDrawerToggle.addEventListener('click', () => {
+            youtubeDrawer.classList.toggle('open');
+            if (youtubeDrawer.classList.contains('open')) {
+                youtubeDrawerToggle.style.display = 'none';
+            }
+        });
+        
+        youtubeDrawerClose.addEventListener('click', () => {
+            youtubeDrawer.classList.remove('open');
+            youtubeDrawerToggle.style.display = 'flex';
+        });
 
     </script>
 </body>
