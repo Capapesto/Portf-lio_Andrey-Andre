@@ -563,20 +563,29 @@
 
     <script>
         // Variável de controle de versão
-        const appVersion = '0.0.3';
+        const appVersion = '0.0.4';
 
         const bootUpScreen = document.getElementById('boot-up-screen');
         const bootUpText = bootUpScreen.querySelector('.boot-up-text');
         const mainContent = document.getElementById('main-content');
         const versionInfo = document.getElementById('version-info');
+
+        // Função para gerar um apelido aleatório
+        function generateRandomAlias() {
+            const firstWords = ['Cibernético', 'Fantasma', 'Andróide', 'Robô', 'Pixel', 'Digital', 'Mágico', 'Mecânico', 'Invisível', 'Sombrio'];
+            const secondWords = ['Sombra', 'Fantasma', 'Drax', 'Lince', 'Anjo', 'Fênix', 'Dragão', 'Vortex', 'Quântico', 'Relâmpago'];
+            const randomFirst = firstWords[Math.floor(Math.random() * firstWords.length)];
+            const randomSecond = secondWords[Math.floor(Math.random() * secondWords.length)];
+            return `${randomFirst}-${randomSecond}`;
+        }
         
-        const hostname = `ANDREY@HOST-${Math.floor(Math.random() * 1000).toString().padStart(4, '0')}`;
+        const alias = generateRandomAlias();
 
         const bootUpLines = [
-            ' > Inicializando Módulo Principal...',
+            ` > Inicializando Módulo Principal (v${appVersion})...`,
             ' > Verificando Integridade do Sistema...',
             ' > Carregando Dados Pessoais...',
-            ` > Acesso Concedido. Bem-vindo, ${hostname}.`,
+            ` > Acesso Concedido. Bem-vindo, ${alias}.`,
         ];
 
         let lineIndex = 0;
@@ -601,7 +610,7 @@
                     setTimeout(() => {
                         mainContent.classList.add('visible');
                         document.getElementById('eye-container').classList.add('visible');
-                        // Exibir a versão após a tela de boot
+                        // Exibir a versão no rodapé
                         versionInfo.textContent = `Version ${appVersion}`;
                     }, 10);
                 }, 1000);
